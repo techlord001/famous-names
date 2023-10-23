@@ -2,26 +2,31 @@
 
 namespace App\Services;
 
-use App\Contracts\CacheServiceContract;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
+use App\Contracts\CacheContract;
+use App\Contracts\StorageContract;
 
 class FamousNamesService
 {
-    protected $cacheService;
+    protected $cacheRepository;
+    protected $storageRepository;
 
-    public function __construct(CacheServiceContract $cacheService)
+    public function __construct(CacheContract $cacheRepository, StorageContract $storageRepository)
     {
-        $this->cacheService = $cacheService;
+        $this->cacheRepository = $cacheRepository;
+        $this->storageRepository = $storageRepository;
     }
 
     public function getNames(): array
     {
-        if (!Cache::has('famous-names')) {
-            $this->cacheService->cacheNames();
+        if (!$this->cacheRepository->has('famous-names')) {
+            $json = $this->storageRepository->get('famous-names.json');
+            $data = json_decode($json, true);
+            $names = isset($data['famousNames']) ? $data['famousNames'] : [];
+
+            $this->cacheRepository->put('famous-names', $names, 60);
         }
 
-        return Cache::get('famous-names');
+        return $this->cacheRepository->get('famous-names');
     }
 
     public function updateName($id, $updatedData)
@@ -33,7 +38,8 @@ class FamousNamesService
                 break;
             }
         }
-        Cache::put('famous-names', $names, 60);
+        
+        $this->cacheRepository->put('famous-names', $names, 60);
     }
 
 
@@ -44,6 +50,6 @@ class FamousNamesService
             return $name['id'] !== $id;
         });
 
-        Cache::put('famous-names', $names, 60);
+        $this->cacheRepository->put('famous-names', $names, 60);
     }
 }

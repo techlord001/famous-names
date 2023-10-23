@@ -2,24 +2,27 @@
 
 namespace Tests\Unit;
 
-use App\Contracts\CacheServiceContract;
+use App\Contracts\CacheContract;
+use App\Contracts\StorageContract;
 use App\Services\FamousNamesService;
-use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class FamousNamesServiceTest extends TestCase
 {
     public function test_it_retrieves_names_from_json()
     {
-        // Mocking the Cache facade to return the names array
-        Cache::shouldReceive('has')
-            ->once()
-            ->with('famous-names')
-            ->andReturn(false);
+        // Arrange
+        $mockedCache = \Mockery::mock(CacheContract::class);
 
-        Cache::shouldReceive('get')
-            ->once()
+        $mockedCache->shouldReceive('has')
             ->with('famous-names')
+            ->once()
+            ->andReturn(false);
+        $mockedCache->shouldReceive('put')
+            ->once();
+        $mockedCache->shouldReceive('get')
+            ->with('famous-names')
+            ->once()
             ->andReturn([
                 [
                     "id" => 1,
@@ -28,14 +31,18 @@ class FamousNamesServiceTest extends TestCase
                 ]
             ]);
 
-        // Mocking the FamousNamesCacheService
-        $cacheServiceMock = \Mockery::mock(CacheServiceContract::class);
-        $cacheServiceMock->shouldReceive('cacheNames')->once();
+        $mockedStorage = \Mockery::mock(StorageContract::class);
+        $mockedStorage
+            ->shouldReceive('get')
+            ->with('famous-names.json')
+            ->once();
 
-        $service = new FamousNamesService($cacheServiceMock);
+        $service = new FamousNamesService($mockedCache, $mockedStorage);
 
+        // Act
         $names = $service->getNames();
 
+        // Assert
         $this->assertIsArray($names);
         $this->assertCount(1, $names);
         $this->assertEquals(1, $names[0]['id']);
@@ -52,25 +59,26 @@ class FamousNamesServiceTest extends TestCase
             ]
         ];
 
-        // Mocking the Cache facade to return the names array
-        Cache::shouldReceive('has')
+        $mockedCache = \Mockery::mock(CacheContract::class);
+
+        $mockedCache->shouldReceive('has')
             ->with('famous-names')
             ->andReturn(true);
 
-        Cache::shouldReceive('get')
-            ->with('famous-names')
-            ->andReturnUsing(function () use (&$cacheData) {
-                return $cacheData;
-            });
-
-        Cache::shouldReceive('put')
+        $mockedCache->shouldReceive('put')
             ->with('famous-names', \Mockery::on(function ($value) use (&$cacheData) {
                 $cacheData = $value;
                 return true;
             }), 60);
-        
-        $cacheService = \Mockery::mock(CacheServiceContract::class);
-        $service = new FamousNamesService($cacheService);
+
+        $mockedCache->shouldReceive('get')->with('famous-names')
+            ->andReturnUsing(function () use (&$cacheData) {
+                return $cacheData;
+            });
+
+        $mockedStorage = \Mockery::mock(StorageContract::class);
+
+        $service = new FamousNamesService($mockedCache, $mockedStorage);
 
         $updatedName = [
             'id' => 1,
@@ -80,7 +88,7 @@ class FamousNamesServiceTest extends TestCase
 
         $service->updateName(1, ['name' => 'Jane Smith']);
 
-        $names = Cache::get('famous-names');
+        $names = $mockedCache->get('famous-names');
         $this->assertEquals($updatedName, $names[0]);
     }
 
@@ -95,26 +103,26 @@ class FamousNamesServiceTest extends TestCase
             ]
         ];
 
-        // Mocking the Cache facade to return the names array
-        Cache::shouldReceive('has')
+        $mockedCache = \Mockery::mock(CacheContract::class);
+
+        $mockedCache->shouldReceive('has')
             ->with('famous-names')
             ->andReturn(true);
 
-        Cache::shouldReceive('get')
-            ->with('famous-names')
+        $mockedCache->shouldReceive('put')
+            ->with('famous-names', \Mockery::on(function ($value) use (&$cacheData) {
+                $cacheData = $value;
+                return true;
+            }), 60);
+
+        $mockedCache->shouldReceive('get')->with('famous-names')
             ->andReturnUsing(function () use (&$cacheData) {
                 return $cacheData;
             });
 
-        Cache::shouldReceive('put')
-            ->once()
-            ->with('famous-names', \Mockery::on(function ($value) use (&$cacheData) {
-                $cacheData = $value;
-                return is_array($value);
-            }), 60);
+        $mockedStorage = \Mockery::mock(StorageContract::class);
 
-        $cacheService = \Mockery::mock(CacheServiceContract::class);
-        $service = new FamousNamesService($cacheService);
+        $service = new FamousNamesService($mockedCache, $mockedStorage);
 
         $service->deleteName(1);
 
