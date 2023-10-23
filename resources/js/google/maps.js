@@ -22,7 +22,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-
+/**
+ * Initializes a Google Map with a marker and an info window displaying information about a famous name.
+ * @async
+ * @param {string} famousName - The name of the famous person.
+ * @param {number} lat - The latitude of the location to be marked on the map.
+ * @param {number} lng - The longitude of the location to be marked on the map.
+ */
 async function initMap(famousName, lat, lng) {
     let map;
 
