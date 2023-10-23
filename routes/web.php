@@ -18,4 +18,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/famous-names', [FamousNamesController::class, 'index']);
+Route::get('/famous-names', [FamousNamesController::class, 'index'])->name('famous-names.index');
+Route::delete('/famous-names/{id}', [FamousNamesController::class, 'delete']);

@@ -19,4 +19,10 @@ class FamousNamesController extends Controller
         $names = $this->nameService->getNames();
         return view('famous-names/index', compact('names'));
     }
+
+    public function delete($id)
+    {
+        $this->nameService->deleteName($id);
+        return redirect()->route('famous-names.index');
+    }
 }

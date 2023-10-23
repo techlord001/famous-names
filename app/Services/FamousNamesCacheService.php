@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
+use App\Contracts\CacheServiceContract;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
-class FamousNamesCacheService
+class FamousNamesCacheService implements CacheServiceContract
 {
     public function cacheNames(): void
     {

@@ -17,7 +17,11 @@
                                     View
                                 </button>
                                 <button type="button" class="btn btn-secondary" disabled>Edit</button>
-                                <button type="button" class="btn btn-danger" disabled>Delete</button>
+                                <form method="POST" action="{{ url('famous-names/' . $name['id']) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
                             </div>
                         </div>
                     </div>
