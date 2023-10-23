@@ -13,6 +13,9 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+    "googlemaps"=> [
+        "key"=> env("GOOGLE_MAPS_API_KEY"),
+    ],
 
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),

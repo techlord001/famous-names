@@ -29,7 +29,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">View Name</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Famous Name Location</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -41,3 +41,7 @@
         </div>
     </div>
 @endsection
+
+<script>
+    var googleMapsApiKey = @json(config('services.googlemaps.key'));
+</script>
