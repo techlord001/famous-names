@@ -1,66 +1,76 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Famous Names
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Famous Names** is a Laravel-based project that allows users to view, update, and delete the records of famous "personalities". Each record consists of a name and geographic coordinates (latitude and longitude) displayed in an interactive Google Map.
 
-## About Laravel
+### Features
+- **View All Famous Names:** A list of all names stored in a local JSON file and cached for performance.
+- **Edit a Name:** Allows modification of the existing names. Also has validation to ensure data integrity.
+- **Delete a Name:** Remove a name from the list.
+- **Interactive Google Map:** View the geographic location associated with each famous name.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### How to Build and Run the Project
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. **Clone the Repository**
+    ```sh
+    git clone https://github.com/techlord001/famous-names.git
+    cd famous-names
+    ```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+2. **Install Composer Dependencies**
+    ```sh
+    composer install
+    ```
 
-## Learning Laravel
+3. **Install NPM Dependencies**
+    ```sh
+    npm install
+    ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+4. **Build Assets**
+    ```sh
+    npm run build
+    ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+5. **Configure .env File**
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    Copy `.env.example` to `.env` and fill in your database and other environment-specific details. Obtain a Google Maps API key and add it to the `.env` file.
 
-## Laravel Sponsors
+8. **Start the Local Development Server**
+    ```sh
+    npm run dev
+    php artisan serve
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+    Visit [http://localhost:8000/famous-names](http://localhost:8000/famous-names) in your browser.
 
-### Premium Partners
+### How to Run Tests
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+You can run the provided tests with PHPUnit using the following command:
 
-## Contributing
+```sh
+vendor/bin/phpunit
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Technologies Used
+- Laravel
+- Google Maps JavaScript API
+- Bootstrap
 
-## Code of Conduct
+### Usage
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Visit [http://localhost:8000/famous-names](http://localhost:8000/famous-names) to view the list of famous names. Each name is associated with geographic coordinates displayed interactively using Google Maps.
 
-## Security Vulnerabilities
+### Code Structure Explanation
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### FamousNamesService Class
 
-## License
+The `FamousNamesService` class is crucial in the application as it's responsible for retrieving, updating, and deleting famous names. It works with Cache and Storage contracts to ensure flexibility and adherence to SOLID principles, particularly the Dependency Inversion Principle. 
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This class utilizes a cache repository to temporarily store the names for faster retrieval and a storage repository to fetch the data from a JSON file. It ensures that if the data is not available in the cache, it fetches it from the JSON file and then stores it in the cache for subsequent accesses. 
+
+Methods include:
+- `getNames()`: Retrieves the list of famous names from the cache or the JSON file if not cached.
+- `updateName($id, $updatedData)`: Updates a particular name record identified by its ID with the provided data.
+- `deleteName(int $id)`: Removes a specific name record from the list.
+
+This class is injected into the `FamousNamesController`, which is responsible for handling HTTP requests related to the famous names, ensuring a separation of concerns and making the codebase easier to manage and test.
