@@ -5,19 +5,20 @@
         <div class="row h-100 justify-content-center align-items-center">
             <div class="d-flex flex-wrap justify-content-center">
                 @foreach ($names as $name)
-                    <div class="mb-3 mx-2">
-                        <div class="card text-center" style="width: 18rem;">
-                            <div class="card-body">
-                                <h5 class="card-title mb-4">{{ $name['name'] }}</h5>
-                                <p class="mb-1">Latitude: {{ $name['location']['lat'] }}</p>
-                                <p class="mb-3">Longitude: {{ $name['location']['lng'] }}</p>
-                                <button type="button" class="btn btn-primary view-btn" data-bs-toggle="modal"
-                                        data-bs-target="#viewModal" data-name="{{ $name['name'] }}"
-                                        data-lat="{{ $name['location']['lat'] }}" data-lng="{{ $name['location']['lng'] }}">
-                                    View
-                                </button>
-                                <button type="button" class="btn btn-secondary" disabled>Edit</button>
-                                <form method="POST" action="{{ url('famous-names/' . $name['id']) }}">
+                <div class="mb-3 mx-2">
+                    <div class="card text-center" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">{{ $name['name'] }}</h5>
+                            <p class="mb-1">Latitude: {{ $name['location']['lat'] }}</p>
+                            <p class="mb-3">Longitude: {{ $name['location']['lng'] }}</p>
+                            <button type="button" class="btn btn-primary view-btn" data-bs-toggle="modal"
+                                    data-bs-target="#viewModal" data-name="{{ $name['name'] }}"
+                                    data-lat="{{ $name['location']['lat'] }}" data-lng="{{ $name['location']['lng'] }}">
+                                View
+                            </button>
+                            <button type="button" class="btn btn-secondary" disabled>Edit</button>
+                            <div class="d-inline-block">
+                                <form method="POST" action="{{ url('famous-names/' . $name['id']) }}" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger">Delete</button>
@@ -25,6 +26,8 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                
                 @endforeach
             </div>
         </div>
