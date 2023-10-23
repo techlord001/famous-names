@@ -61,7 +61,13 @@ class FamousNamesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->nameService->updateName($id, $request->all());
+        $validatedData = $request->validate([
+            'name' => 'required|max:255',
+            'location.lat' => 'required|numeric',
+            'location.lng' => 'required|numeric',
+        ]);
+
+        $this->nameService->updateName($id, $validatedData);
         return redirect()->route('famous-names.index');
     }
 
