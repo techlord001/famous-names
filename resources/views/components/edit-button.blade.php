@@ -1,0 +1,1 @@
+<a href="{{ route('famous-names.edit', $id) }}" class="btn btn-secondary">Edit</a>
