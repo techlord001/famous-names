@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\FamousNameService;
+use App\Services\FamousNamesService;
 use Illuminate\Http\Request;
 
 class FamousNamesController extends Controller
 {
     protected $nameService;
 
-    public function __construct(FamousNameService $nameService)
+    public function __construct(FamousNamesService $nameService)
     {
         $this->nameService = $nameService;
     }

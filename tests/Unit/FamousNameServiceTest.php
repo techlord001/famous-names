@@ -2,11 +2,11 @@
 
 namespace Tests\Unit;
 
-use App\Services\FamousNameService;
+use App\Services\FamousNamesService;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-class FamousNameServiceTest extends TestCase
+class FamousNamesServiceTest extends TestCase
 {
     public function test_it_retrieves_names_from_json()
     {
@@ -16,7 +16,11 @@ class FamousNameServiceTest extends TestCase
             ->with('famous-names.json')
             ->andReturn('{"famousNames":[{"id":1,"name":"John Smith","location":{"lat":53.883441,"lng":-1.262003}}]}');
 
-        $service = new FamousNameService();
+        // Mocking the FamousNamesCacheService
+        $cacheServiceMock = \Mockery::mock(FamousNamesCacheService::class);
+        $cacheServiceMock->shouldReceive('cacheNames')->once();
+
+        $service = new FamousNamesService($cacheServiceMock);
 
         $names = $service->getNames();
 
