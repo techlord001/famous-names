@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use App\Contracts\CacheServiceContract;
 use App\Services\FamousNamesService;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class FamousNamesServiceTest extends TestCase
@@ -43,6 +42,49 @@ class FamousNamesServiceTest extends TestCase
         $this->assertEquals('John Smith', $names[0]['name']);
     }
 
+    public function test_it_updates_a_name()
+    {
+        $cacheData = [
+            [
+                "id" => 1,
+                "name" => "John Smith",
+                "location" => ["lat" => 53.883441, "lng" => -1.262003]
+            ]
+        ];
+
+        // Mocking the Cache facade to return the names array
+        Cache::shouldReceive('has')
+            ->with('famous-names')
+            ->andReturn(true);
+
+        Cache::shouldReceive('get')
+            ->with('famous-names')
+            ->andReturnUsing(function () use (&$cacheData) {
+                return $cacheData;
+            });
+
+        Cache::shouldReceive('put')
+            ->with('famous-names', \Mockery::on(function ($value) use (&$cacheData) {
+                $cacheData = $value;
+                return true;
+            }), 60);
+        
+        $cacheService = \Mockery::mock(CacheServiceContract::class);
+        $service = new FamousNamesService($cacheService);
+
+        $updatedName = [
+            'id' => 1,
+            'name' => 'Jane Smith',
+            'location' => ['lat' => 53.883441, 'lng' => -1.262003]
+        ];
+
+        $service->updateName(1, ['name' => 'Jane Smith']);
+
+        $names = Cache::get('famous-names');
+        $this->assertEquals($updatedName, $names[0]);
+    }
+
+
     public function test_it_deletes_a_name()
     {
         $cacheData = [
@@ -74,10 +116,10 @@ class FamousNamesServiceTest extends TestCase
         $cacheService = \Mockery::mock(CacheServiceContract::class);
         $service = new FamousNamesService($cacheService);
 
-        $service->deleteName(1); // Delete the name with ID 1
+        $service->deleteName(1);
 
         $names = $service->getNames();
 
-        $this->assertEmpty($names); // Assert that no names exist after deletion
+        $this->assertEmpty($names);
     }
 }

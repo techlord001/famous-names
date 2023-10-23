@@ -20,9 +20,22 @@ class FamousNamesService
         if (!Cache::has('famous-names')) {
             $this->cacheService->cacheNames();
         }
-        
+
         return Cache::get('famous-names');
     }
+
+    public function updateName($id, $updatedData)
+    {
+        $names = $this->getNames();
+        foreach ($names as &$name) {
+            if ($name['id'] == $id) {
+                $name = array_merge($name, $updatedData);
+                break;
+            }
+        }
+        Cache::put('famous-names', $names, 60);
+    }
+
 
     public function deleteName(int $id): void
     {

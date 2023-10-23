@@ -19,4 +19,6 @@ Route::get('/', function () {
 });
 
 Route::get('/famous-names', [FamousNamesController::class, 'index'])->name('famous-names.index');
+Route::get('/famous-names/{id}/edit', [FamousNamesController::class, 'edit'])->name('famous-names.edit');
+Route::patch('/famous-names/{id}', [FamousNamesController::class, 'update'])->name('famous-names.update');
 Route::delete('/famous-names/{id}', [FamousNamesController::class, 'delete']);

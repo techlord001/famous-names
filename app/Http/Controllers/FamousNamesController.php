@@ -20,6 +20,19 @@ class FamousNamesController extends Controller
         return view('famous-names/index', compact('names'));
     }
 
+    public function edit($id)
+    {
+        $names = $this->nameService->getNames();
+        $name = collect($names)->firstWhere('id', $id);
+        return view('famous-names.edit', compact('name', 'id'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $this->nameService->updateName($id, $request->all());
+        return redirect()->route('famous-names.index');
+    }
+
     public function delete($id)
     {
         $this->nameService->deleteName($id);

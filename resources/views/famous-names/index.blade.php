@@ -16,7 +16,7 @@
                                     data-lat="{{ $name['location']['lat'] }}" data-lng="{{ $name['location']['lng'] }}">
                                 View
                             </button>
-                            <button type="button" class="btn btn-secondary" disabled>Edit</button>
+                            <a href="{{ route('famous-names.edit', $name['id']) }}" class="btn btn-secondary">Edit</a>
                             <div class="d-inline-block">
                                 <form method="POST" action="{{ url('famous-names/' . $name['id']) }}" class="d-inline">
                                     @csrf
